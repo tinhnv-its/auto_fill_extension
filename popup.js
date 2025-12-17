@@ -1,80 +1,37 @@
 document.addEventListener('DOMContentLoaded', function() {
   const apiUrlInput = document.getElementById('apiUrl');
   const fillBtn = document.getElementById('fillBtn');
-  const addFieldBtn = document.getElementById('addFieldBtn');
-  const fieldContainer = document.getElementById('fieldContainer');
 
-  // Load saved data
-  chrome.storage.sync.get(['apiUrl', 'fieldMappings'], function(result) {
+  // Load saved API URL
+  chrome.storage.sync.get(['apiUrl'], function(result) {
     if (result.apiUrl) {
       apiUrlInput.value = result.apiUrl;
     }
-    if (result.fieldMappings) {
-      result.fieldMappings.forEach(mapping => addFieldRow(mapping.apiField, mapping.inputId));
-    }
   });
 
-  // Auto save khi người dùng nhập
-  function autoSave() {
-    const apiUrl = apiUrlInput.value.trim();
-    const fieldMappings = [];
-    
-    fieldContainer.querySelectorAll('.field-row').forEach(row => {
-      const inputs = row.querySelectorAll('input');
-      const apiField = inputs[0].value.trim();
-      const inputId = inputs[1].value.trim();
-      if (apiField || inputId) {
-        fieldMappings.push({ apiField, inputId });
-      }
-    });
-
-    chrome.storage.sync.set({ apiUrl, fieldMappings });
-  }
-
-  // Lắng nghe sự kiện input
-  apiUrlInput.addEventListener('input', autoSave);
-  
-  // Delegate event cho dynamic fields
-  fieldContainer.addEventListener('input', autoSave);
-
-  function addFieldRow(apiField = '', inputId = '') {
-    const row = document.createElement('div');
-    row.className = 'field-row';
-    row.innerHTML = `
-      <input type="text" placeholder="Thuộc tính trong API" value="${apiField}">
-      <input type="text" placeholder="ID trong html" value="${inputId}">
-      <button class="remove-btn">X</button>
-    `;
-    
-    row.querySelector('.remove-btn').addEventListener('click', () => {
-      row.remove();
-      autoSave();
-    });
-    fieldContainer.appendChild(row);
-  }
-
-  addFieldBtn.addEventListener('click', () => addFieldRow());
+  // Auto save API URL
+  apiUrlInput.addEventListener('input', function() {
+    chrome.storage.sync.set({ apiUrl: apiUrlInput.value.trim() });
+  });
 
   fillBtn.addEventListener('click', function() {
     const apiUrl = apiUrlInput.value.trim();
-    const fieldMappings = [];
-    
-    fieldContainer.querySelectorAll('.field-row').forEach(row => {
-      const inputs = row.querySelectorAll('input');
-      const apiField = inputs[0].value.trim();
-      const inputId = inputs[1].value.trim();
-      if (apiField && inputId) {
-        fieldMappings.push({ apiField, inputId });
-      }
-    });
 
     if (!apiUrl) {
       alert('Vui lòng nhập API URL');
       return;
     }
 
-    // Save data
-    chrome.storage.sync.set({ apiUrl, fieldMappings });
+    // Fixed field mappings từ db.json
+    const fieldMappings = [
+      { apiField: 'username_first', inputId: 'username_first' },
+      { apiField: 'username_last', inputId: 'username_last' },
+      { apiField: 'zip', inputId: 'zip' },
+      { apiField: 'mail', inputId: 'mail' }
+    ];
+
+    // Save API URL
+    chrome.storage.sync.set({ apiUrl });
 
     // Trigger fill data
     chrome.runtime.sendMessage({
