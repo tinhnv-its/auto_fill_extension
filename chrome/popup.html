@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      width: 350px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+
+    input {
+      width: 100%;
+      margin: 5px 0;
+      padding: 5px;
+      box-sizing: border-box;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 5px;
+      margin: 5px 0;
+    }
+
+    .field-row input {
+      flex: 1;
+      margin: 0;
+    }
+
+    button {
+      padding: 5px 8px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .remove-btn {
+      background: #ea4335;
+      width: 30px;
+    }
+
+    #fillBtn {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>TỰ ĐỘNG ĐIỀN DỮ LIỆU EXTENSION</h3>
+  <input type="text" id="apiUrl" placeholder="Nhập API URL">
+
+  <h4>ID cần điền dữ liệu:</h4>
+  <button id="addFieldBtn">+ THÊM</button>
+  <div id="fieldContainer"></div>
+
+  <button id="fillBtn">ĐIỀN DỮ LIỆU</button>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
