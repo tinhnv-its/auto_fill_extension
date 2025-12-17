@@ -14,6 +14,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // Auto save khi người dùng nhập
+  function autoSave() {
+    const apiUrl = apiUrlInput.value.trim();
+    const fieldMappings = [];
+    
+    fieldContainer.querySelectorAll('.field-row').forEach(row => {
+      const inputs = row.querySelectorAll('input');
+      const apiField = inputs[0].value.trim();
+      const inputId = inputs[1].value.trim();
+      if (apiField || inputId) {
+        fieldMappings.push({ apiField, inputId });
+      }
+    });
+
+    chrome.storage.sync.set({ apiUrl, fieldMappings });
+  }
+
+  // Lắng nghe sự kiện input
+  apiUrlInput.addEventListener('input', autoSave);
+  
+  // Delegate event cho dynamic fields
+  fieldContainer.addEventListener('input', autoSave);
+
   function addFieldRow(apiField = '', inputId = '') {
     const row = document.createElement('div');
     row.className = 'field-row';
@@ -23,7 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <button class="remove-btn">X</button>
     `;
     
-    row.querySelector('.remove-btn').addEventListener('click', () => row.remove());
+    row.querySelector('.remove-btn').addEventListener('click', () => {
+      row.remove();
+      autoSave();
+    });
     fieldContainer.appendChild(row);
   }
 
